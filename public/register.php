@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-$errors = [];
+require_once __DIR__ . '/../config/database.php';
 
+$errors = [];
 $username = '';
 $password = '';
 
@@ -35,7 +36,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        $success = 'Validation successful. Account creation will be added next.';
+
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+    
+        try {
+    
+            $statement = $pdo->prepare(
+                'INSERT INTO users (username, password_hash, role)
+                 VALUES (:username, :password_hash, :role)'
+            );
+    
+            $statement->execute([
+                'username' => $username,
+                'password_hash' => $passwordHash,
+                'role' => 'user'
+            ]);
+    
+            $success = 'Account created successfully. You can now log in.';
+    
+            $username = '';
+            $password = '';
+    
+        } catch (PDOException $e) {
+    
+            $errors[] = 'Unable to create the account. Please try again.';
+    
+        }
     }
 }
 
