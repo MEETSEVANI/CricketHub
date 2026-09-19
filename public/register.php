@@ -58,9 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $password = '';
     
         } catch (PDOException $e) {
-    
-            $errors[] = 'Unable to create the account. Please try again.';
-    
+
+            if ($e->getCode() === '23000') {
+                $errors[] = 'That username is already in use. Please choose another username.';
+            } else {
+                $errors[] = 'Unable to create the account. Please try again.';
+            }
+        
         }
     }
 }
