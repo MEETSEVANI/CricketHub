@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: crickethub-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: crickethub
+      POSTGRES_USER: crickethub
+      POSTGRES_PASSWORD: crickethub_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - crickethub_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  crickethub_postgres_data:
