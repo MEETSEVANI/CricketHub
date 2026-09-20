@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const pool = require('../config/database');
 const { validateLogin } = require('../validators/loginValidator');
+const { createToken } = require('../config/auth');
 
 async function loginUser(req, res) {
   const { email, password } = req.body;
@@ -44,9 +45,12 @@ async function loginUser(req, res) {
       });
     }
 
+    const token = createToken(user);
+
     return res.status(200).json({
       status: 'success',
       message: 'Login successful.',
+      token,
       user: {
         id: user.id,
         email: user.email,
