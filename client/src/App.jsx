@@ -1,122 +1,130 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
-
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      {/* Navigation */}
+      <header className="border-b border-slate-200 bg-white">
+        <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
+          <div className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-slate-900">
+            <span className="text-3xl">🏏</span>
+            <span>CricketHub</span>
+          </div>
 
-      <div className="ticks"></div>
+          <div className="flex items-center gap-3">
+            <button className="rounded-lg px-5 py-3 font-semibold text-slate-900 transition hover:bg-slate-100">
+              Login
+            </button>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+            <button className="rounded-lg bg-slate-900 px-5 py-3 font-semibold text-white transition hover:bg-slate-700">
+              Create Account
+            </button>
+          </div>
+        </nav>
+      </header>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {/* Hero */}
+      <main>
+        <section className="mx-auto grid max-w-7xl items-center gap-12 px-6 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-24">
+          <div>
+            <p className="mb-5 text-sm font-extrabold tracking-[0.18em] text-amber-600">
+              YOUR CRICKET INFORMATION HUB
+            </p>
+
+            <h1 className="text-6xl font-black leading-[0.98] tracking-[-0.05em] text-slate-900 sm:text-7xl">
+              Everything cricket,
+              <span className="block text-amber-600">in one place.</span>
+            </h1>
+
+            <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-500">
+              Search players, explore matches, view performances, and keep
+              your favourite cricket information organized in one place.
+            </p>
+
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <button className="rounded-lg bg-slate-900 px-6 py-4 font-semibold text-white transition hover:bg-slate-700">
+                Get Started
+              </button>
+
+              <button className="rounded-lg border border-slate-300 bg-transparent px-6 py-4 font-semibold text-slate-900 transition hover:bg-white">
+                Explore Features
+              </button>
+            </div>
+          </div>
+
+          {/* Featured Match */}
+          <div className="rounded-2xl bg-slate-900 p-8 text-white shadow-2xl shadow-slate-900/20">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold tracking-widest text-slate-300">
+                FEATURED MATCH
+              </span>
+
+              <span className="rounded-full bg-emerald-600 px-3 py-2 text-xs font-bold tracking-wider">
+                COMPLETED
+              </span>
+            </div>
+
+            <div className="mt-12 grid grid-cols-[1fr_auto_1fr] items-center gap-4 text-center">
+              <div>
+                <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-white font-extrabold text-slate-900">
+                  IND
+                </div>
+                <h2 className="font-semibold">India</h2>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <strong className="text-2xl">214/6</strong>
+                <span className="text-xs text-slate-400">vs</span>
+                <strong className="text-2xl">210/8</strong>
+              </div>
+
+              <div>
+                <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-white font-extrabold text-slate-900">
+                  AUS
+                </div>
+                <h2 className="font-semibold">Australia</h2>
+              </div>
+            </div>
+
+            <div className="mt-9 border-t border-white/10 pt-6 text-center font-bold text-amber-400">
+              India won by 4 runs
+            </div>
+          </div>
+        </section>
+
+        {/* Features */}
+        <section className="mx-auto grid max-w-7xl gap-5 px-6 pb-20 md:grid-cols-3 lg:px-10">
+          <FeatureCard
+            icon="👤"
+            title="Player Search"
+            description="Find player information, roles, countries, and statistics."
+          />
+
+          <FeatureCard
+            icon="🏆"
+            title="Match Centre"
+            description="Explore upcoming and completed matches and their results."
+          />
+
+          <FeatureCard
+            icon="⭐"
+            title="Favourites"
+            description="Save players and matches you want to access quickly."
+          />
+        </section>
+      </main>
+    </div>
+  );
 }
 
-export default App
+function FeatureCard({ icon, title, description }) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-7 transition hover:-translate-y-1 hover:shadow-lg">
+      <div className="text-2xl">{icon}</div>
+
+      <h3 className="mt-5 text-lg font-bold text-slate-900">{title}</h3>
+
+      <p className="mt-2 leading-7 text-slate-500">{description}</p>
+    </div>
+  );
+}
+
+export default App;
