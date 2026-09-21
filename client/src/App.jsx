@@ -1,27 +1,38 @@
-function App() {
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+
+function Home() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      {/* Navigation */}
       <header className="border-b border-slate-200 bg-white">
         <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
-          <div className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-slate-900">
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-slate-900"
+          >
             <span className="text-3xl">🏏</span>
             <span>CricketHub</span>
-          </div>
+          </Link>
 
           <div className="flex items-center gap-3">
-            <button className="rounded-lg px-5 py-3 font-semibold text-slate-900 transition hover:bg-slate-100">
+            <Link
+              to="/login"
+              className="rounded-lg px-5 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
+            >
               Login
-            </button>
+            </Link>
 
-            <button className="rounded-lg bg-slate-900 px-5 py-3 font-semibold text-white transition hover:bg-slate-700">
+            <Link
+              to="/register"
+              className="rounded-lg bg-slate-900 px-5 py-3 font-semibold text-white transition hover:bg-slate-700"
+            >
               Create Account
-            </button>
+            </Link>
           </div>
         </nav>
       </header>
 
-      {/* Hero */}
       <main>
         <section className="mx-auto grid max-w-7xl items-center gap-12 px-6 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-24">
           <div>
@@ -40,17 +51,22 @@ function App() {
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <button className="rounded-lg bg-slate-900 px-6 py-4 font-semibold text-white transition hover:bg-slate-700">
+              <Link
+                to="/register"
+                className="rounded-lg bg-slate-900 px-6 py-4 text-center font-semibold text-white transition hover:bg-slate-700"
+              >
                 Get Started
-              </button>
+              </Link>
 
-              <button className="rounded-lg border border-slate-300 bg-transparent px-6 py-4 font-semibold text-slate-900 transition hover:bg-white">
+              <a
+                href="#features"
+                className="rounded-lg border border-slate-300 bg-transparent px-6 py-4 text-center font-semibold text-slate-900 transition hover:bg-white"
+              >
                 Explore Features
-              </button>
+              </a>
             </div>
           </div>
 
-          {/* Featured Match */}
           <div className="rounded-2xl bg-slate-900 p-8 text-white shadow-2xl shadow-slate-900/20">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold tracking-widest text-slate-300">
@@ -67,6 +83,7 @@ function App() {
                 <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-white font-extrabold text-slate-900">
                   IND
                 </div>
+
                 <h2 className="font-semibold">India</h2>
               </div>
 
@@ -80,6 +97,7 @@ function App() {
                 <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full bg-white font-extrabold text-slate-900">
                   AUS
                 </div>
+
                 <h2 className="font-semibold">Australia</h2>
               </div>
             </div>
@@ -90,8 +108,10 @@ function App() {
           </div>
         </section>
 
-        {/* Features */}
-        <section className="mx-auto grid max-w-7xl gap-5 px-6 pb-20 md:grid-cols-3 lg:px-10">
+        <section
+          id="features"
+          className="mx-auto grid max-w-7xl gap-5 px-6 pb-20 md:grid-cols-3 lg:px-10"
+        >
           <FeatureCard
             icon="👤"
             title="Player Search"
@@ -124,6 +144,18 @@ function FeatureCard({ icon, title, description }) {
 
       <p className="mt-2 leading-7 text-slate-500">{description}</p>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

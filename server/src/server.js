@@ -1,10 +1,18 @@
 require('dotenv').config();
-const authRoutes = require('./routes/authRoutes');
+
 const express = require('express');
+const cors = require('cors');
+
+const authRoutes = require('./routes/authRoutes');
 const pool = require('./config/database');
 const protectedTestRoutes = require('./routes/protectedTestRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+  })
+);
 app.use('/api/protected-test', protectedTestRoutes);
 app.use(express.json());
 app.use('/api/auth', authRoutes);
