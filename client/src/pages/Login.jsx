@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { loginUser } from '../services/authService';
+import { useAuth } from '../context/AuthContext';
 
 function Login() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -26,13 +27,10 @@ function Login() {
     event.preventDefault();
     setError('');
     setLoading(true);
-
+  
     try {
-      const data = await loginUser(formData.email, formData.password);
-
-      localStorage.setItem('crickethub_token', data.token);
-      localStorage.setItem('crickethub_user', JSON.stringify(data.user));
-
+      await login(formData.email, formData.password);
+  
       navigate('/dashboard');
     } catch (error) {
       setError(error.message);
