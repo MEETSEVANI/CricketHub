@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "test": "jest --runInBand",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "db:setup": "node scripts/setupDatabase.js",
+    "db:promote-admin": "node scripts/promoteAdmin.js"
   },
   "keywords": [],
   "author": "",
