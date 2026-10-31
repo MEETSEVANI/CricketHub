@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 
 const authRoutes = require('./routes/authRoutes');
+const playerRoutes = require('./routes/playerRoutes');
 const pool = require('./config/database');
 const protectedTestRoutes = require('./routes/protectedTestRoutes');
 const app = express();
@@ -16,6 +17,7 @@ app.use(
 app.use('/api/protected-test', protectedTestRoutes);
 app.use(express.json());
 app.use('/api/auth', authRoutes);
+app.use('/api/players', playerRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({
