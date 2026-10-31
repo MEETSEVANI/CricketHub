@@ -20,3 +20,5 @@ dist/
 
 # Temporary files
 *.tmp
+playwright-report/
+test-results/
