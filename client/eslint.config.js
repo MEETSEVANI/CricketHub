@@ -18,4 +18,10 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    files: ['vite.config.js', 'playwright.config.js', 'e2e/**/*.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ])

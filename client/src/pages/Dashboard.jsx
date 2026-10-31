@@ -61,6 +61,7 @@ function Dashboard() {
             icon="👤"
             title="Players"
             description="Search players and view their information and statistics."
+            to="/players"
           />
 
           <DashboardCard
@@ -97,15 +98,18 @@ function Dashboard() {
   );
 }
 
-function DashboardCard({ icon, title, description }) {
-  return (
-    <div className="rounded-xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+function DashboardCard({ icon, title, description, to }) {
+  const className = 'block rounded-xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg';
+  const content = (
+    <>
       <div className="text-2xl">{icon}</div>
-
       <h2 className="mt-5 text-xl font-bold text-slate-900">{title}</h2>
-
       <p className="mt-2 leading-7 text-slate-500">{description}</p>
-    </div>
+    </>
+  );
+
+  return (
+    to ? <Link to={to} className={className}>{content}</Link> : <div className={className}>{content}</div>
   );
 }
 

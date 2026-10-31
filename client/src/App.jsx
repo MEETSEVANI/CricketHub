@@ -4,6 +4,8 @@ import AdminRoute from './components/AdminRoute';
 import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
 import Dashboard from './pages/Dashboard';
+import Players from './pages/Players';
+import PlayerDetails from './pages/PlayerDetails';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -181,6 +183,8 @@ function App() {
             }
           />
           
+          <Route path="/players" element={<ProtectedRoute><Players /></ProtectedRoute>} />
+          <Route path="/players/:id" element={<ProtectedRoute><PlayerDetails /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

@@ -55,7 +55,5 @@ function useAuth() {
   return useContext(AuthContext);
 }
 
-export {
-  AuthProvider,
-  useAuth,
-};
+// The context hook is intentionally colocated with its provider.
+export { AuthProvider, useAuth }; // eslint-disable-line react-refresh/only-export-components
