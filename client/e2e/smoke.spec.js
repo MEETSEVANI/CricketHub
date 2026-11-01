@@ -17,6 +17,7 @@ let registeredEmail;
 let adminEmail;
 let newUserEmail;
 let testPlayerName;
+let testMatchName;
 
 test.beforeAll(async () => {
   const suffix = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
@@ -33,6 +34,7 @@ test.beforeAll(async () => {
 test.afterAll(async () => {
   const emails = [registeredEmail, adminEmail, newUserEmail].filter(Boolean);
   if (testPlayerName) await pool.query('DELETE FROM players WHERE name=$1', [testPlayerName]);
+  if (testMatchName) await pool.query('DELETE FROM matches WHERE match_name=$1', [testMatchName]);
   if (emails.length) await pool.query('DELETE FROM users WHERE email = ANY($1)', [emails]);
   await pool.end();
 });
@@ -90,6 +92,10 @@ test('registered user is blocked from administrator player management', async ({
   await page.goto('/admin/players');
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole('heading', { name: 'Welcome to CricketHub' })).toBeVisible();
+
+  await page.goto('/admin/matches');
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.getByRole('heading', { name: 'Welcome to CricketHub' })).toBeVisible();
 });
 
 test('administrator can create, update, and delete player records', async ({ page }) => {
@@ -116,4 +122,34 @@ test('administrator can create, update, and delete player records', async ({ pag
   await playerRow.getByRole('button', { name: 'Delete' }).click();
   await expect(page.getByRole('heading', { name: playerName })).toHaveCount(0);
   await expect(page.getByRole('status')).toContainText('Player deleted.');
+});
+
+test('administrator can create, complete, and delete match records', async ({ page }) => {
+  testMatchName = `Playwright Match ${Date.now()}`;
+  const future = new Date(Date.now() + 86_400_000);
+  const localDateTime = new Date(future.getTime() - future.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+  await signIn(page, adminEmail);
+  await page.goto('/admin/matches');
+  await expect(page.getByRole('heading', { name: 'Manage matches' })).toBeVisible();
+
+  await page.getByLabel('Match name').fill(testMatchName);
+  await page.getByLabel('Team A').fill('Northern Comets');
+  await page.getByLabel('Team B').fill('Lakeshore Falcons');
+  await page.getByLabel('Date and time').fill(localDateTime);
+  await page.getByLabel('Venue').fill('Toronto Cricket Ground');
+  await page.getByRole('button', { name: 'Create match' }).click();
+  await expect(page.getByRole('status')).toContainText('Match created.');
+
+  const matchRow = page.locator('[data-testid^="match-row-"]').filter({ hasText: testMatchName });
+  await matchRow.getByRole('button', { name: 'Edit' }).click();
+  await page.getByLabel('Status').selectOption('Completed');
+  await page.getByLabel('Result').fill('Northern Comets won by 12 runs.');
+  await page.getByRole('button', { name: 'Save changes' }).click();
+  await expect(page.getByRole('status')).toContainText('Match updated.');
+  await expect(matchRow).toContainText('Northern Comets won by 12 runs.');
+
+  page.once('dialog', (dialog) => dialog.accept());
+  await matchRow.getByRole('button', { name: 'Delete' }).click();
+  await expect(matchRow).toHaveCount(0);
+  await expect(page.getByRole('status')).toContainText('Match deleted.');
 });

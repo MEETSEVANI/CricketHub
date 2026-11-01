@@ -8,6 +8,7 @@ let adminToken;
 let testUserId;
 const testEmail = `cricket-api-${Date.now()}@example.test`;
 const testPlayerName = `API Test Player ${Date.now()}`;
+const testMatchName = `API Test Match ${Date.now()}`;
 
 function tokenFor(role) {
   return jwt.sign({ userId: testUserId, role }, process.env.JWT_SECRET, { expiresIn: '2h' });
@@ -26,6 +27,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await pool.query('DELETE FROM players WHERE name=$1', [testPlayerName]);
+  await pool.query('DELETE FROM matches WHERE match_name=$1', [testMatchName]);
   if (testUserId) await pool.query('DELETE FROM users WHERE id=$1', [testUserId]);
   await pool.end();
 });
@@ -86,6 +88,48 @@ describe('Cricket data API', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body.matches.length).toBeGreaterThan(0);
     expect(response.body.matches.every((match) => match.status === 'Scheduled')).toBe(true);
+  });
+
+  test('only administrators can create, update, and delete match records', async () => {
+    const payload = {
+      match_name: testMatchName,
+      team_a: 'Northern Comets',
+      team_b: 'Lakeshore Falcons',
+      match_datetime: new Date(Date.now() + 86_400_000).toISOString(),
+      venue: 'Toronto Cricket Ground',
+      status: 'Scheduled',
+      result: '',
+    };
+    const denied = await request(app)
+      .post('/api/matches')
+      .set('Authorization', `Bearer ${registeredToken}`)
+      .send(payload);
+    expect(denied.statusCode).toBe(403);
+
+    const invalid = await request(app)
+      .post('/api/matches')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ ...payload, team_b: payload.team_a });
+    expect(invalid.statusCode).toBe(400);
+
+    const created = await request(app)
+      .post('/api/matches')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(payload);
+    expect(created.statusCode).toBe(201);
+    const matchId = created.body.match.id;
+
+    const updated = await request(app)
+      .put(`/api/matches/${matchId}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ ...payload, status: 'Completed', result: 'Northern Comets won by 12 runs.' });
+    expect(updated.statusCode).toBe(200);
+    expect(updated.body.match).toMatchObject({ status: 'Completed', result: 'Northern Comets won by 12 runs.' });
+
+    const deleted = await request(app)
+      .delete(`/api/matches/${matchId}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(deleted.statusCode).toBe(200);
   });
 
   test('completed match details include lineups and player performances', async () => {

@@ -45,7 +45,9 @@ function AdminDashboard() {
 
           <AdminCard
             title="Manage Matches"
-            description="Create and manage matches, statuses, results, and lineups."
+            description="Create, update, and remove match records and results."
+            to="/admin/matches"
+            available
           />
         </div>
       </main>
@@ -60,7 +62,7 @@ function AdminCard({ title, description, to, available = false }) {
 
       <p className="mt-2 leading-7 text-slate-500">{description}</p>
 
-      {available ? <Link to={to} className="mt-5 inline-block rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Open player management</Link> : <span className="mt-5 inline-block rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-500">Planned next</span>}
+      {available ? <Link to={to} className="mt-5 inline-block rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Open {title === 'Manage Players' ? 'player' : 'match'} management</Link> : <span className="mt-5 inline-block rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-500">Planned next</span>}
     </div>
   );
 }

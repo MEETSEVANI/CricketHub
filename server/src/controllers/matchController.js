@@ -1,4 +1,5 @@
 const pool = require('../config/database');
+const { validateMatch } = require('../validators/matchValidator');
 
 const MATCH_FIELDS = `id, match_name, team_a, team_b, match_datetime, venue,
   status, result, created_at, updated_at`;
@@ -71,4 +72,58 @@ async function getMatch(req, res) {
   }
 }
 
-module.exports = { listMatches, getMatch };
+async function createMatch(req, res) {
+  const { errors, match } = validateMatch(req.body);
+  if (errors.length) return res.status(400).json({ status: 'error', message: 'Match validation failed.', errors });
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO matches (match_name, team_a, team_b, match_datetime, venue, status, result)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING ${MATCH_FIELDS}`,
+      [match.match_name, match.team_a, match.team_b, match.match_datetime, match.venue, match.status, match.result]
+    );
+    return res.status(201).json({ status: 'success', message: 'Match created.', match: result.rows[0] });
+  } catch (error) {
+    if (error.code === '23505') return res.status(409).json({ status: 'error', message: 'A match with that name already exists.' });
+    console.error('Match creation error:', error.message);
+    return res.status(500).json({ status: 'error', message: 'Unable to create match.' });
+  }
+}
+
+async function updateMatch(req, res) {
+  const id = parseMatchId(req.params.id);
+  if (!id) return res.status(400).json({ status: 'error', message: 'Invalid match id.' });
+  const { errors, match } = validateMatch(req.body);
+  if (errors.length) return res.status(400).json({ status: 'error', message: 'Match validation failed.', errors });
+
+  try {
+    const result = await pool.query(
+      `UPDATE matches SET match_name=$1, team_a=$2, team_b=$3, match_datetime=$4,
+       venue=$5, status=$6, result=$7, updated_at=CURRENT_TIMESTAMP
+       WHERE id=$8 RETURNING ${MATCH_FIELDS}`,
+      [match.match_name, match.team_a, match.team_b, match.match_datetime, match.venue, match.status, match.result, id]
+    );
+    if (!result.rows[0]) return res.status(404).json({ status: 'error', message: 'Match not found.' });
+    return res.json({ status: 'success', message: 'Match updated.', match: result.rows[0] });
+  } catch (error) {
+    if (error.code === '23505') return res.status(409).json({ status: 'error', message: 'A match with that name already exists.' });
+    console.error('Match update error:', error.message);
+    return res.status(500).json({ status: 'error', message: 'Unable to update match.' });
+  }
+}
+
+async function deleteMatch(req, res) {
+  const id = parseMatchId(req.params.id);
+  if (!id) return res.status(400).json({ status: 'error', message: 'Invalid match id.' });
+
+  try {
+    const result = await pool.query('DELETE FROM matches WHERE id=$1 RETURNING id', [id]);
+    if (!result.rows[0]) return res.status(404).json({ status: 'error', message: 'Match not found.' });
+    return res.json({ status: 'success', message: 'Match deleted.' });
+  } catch (error) {
+    console.error('Match deletion error:', error.message);
+    return res.status(500).json({ status: 'error', message: 'Unable to delete match.' });
+  }
+}
+
+module.exports = { listMatches, getMatch, createMatch, updateMatch, deleteMatch };
