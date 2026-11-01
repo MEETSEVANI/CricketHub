@@ -68,6 +68,7 @@ function Dashboard() {
             icon="🏆"
             title="Matches"
             description="Explore upcoming and completed cricket matches."
+            to="/matches"
           />
 
           <DashboardCard
