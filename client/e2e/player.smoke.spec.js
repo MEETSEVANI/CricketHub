@@ -34,7 +34,7 @@ test('registered user can find a player, view the profile, and save a favourite'
   await page.getByRole('button', { name: 'Sign In' }).click();
   await expect(page.getByRole('heading', { name: 'Welcome to CricketHub' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Players' }).click();
+  await page.getByRole('link', { name: 'Players', exact: true }).click();
   await page.getByLabel('Search players by name').fill('aarav');
   await page.getByRole('link', { name: /Aarav Mehta/ }).click();
   await expect(page.getByRole('heading', { name: 'Aarav Mehta' })).toBeVisible();

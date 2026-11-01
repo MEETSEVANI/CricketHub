@@ -47,7 +47,7 @@ test('registered user can search and filter the match list', async ({ page }) =>
   await page.getByRole('button', { name: 'Sign In' }).click();
   await expect(page.getByRole('heading', { name: 'Welcome to CricketHub' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Matches' }).click();
+  await page.getByRole('link', { name: 'Matches', exact: true }).click();
   await expect(page.getByText(scheduledMatch.match_name)).toBeVisible();
   await expect(page.getByText(completedMatch.match_name)).toBeVisible();
   await page.getByLabel('Filter matches by status').selectOption('Scheduled');

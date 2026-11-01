@@ -48,7 +48,7 @@ function Players() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      <AppHeader showPlayers />
+      <AppHeader showPlayers showMatches showFavourites />
       <main className="mx-auto max-w-7xl px-6 py-10 lg:px-10">
         <p className="text-sm font-extrabold tracking-[0.18em] text-amber-600">PLAYER DIRECTORY</p>
         <h1 className="mt-2 text-4xl font-black tracking-tight">Find a player</h1>

@@ -75,6 +75,7 @@ function Dashboard() {
             icon="⭐"
             title="Favourites"
             description="Access the players and matches you have saved."
+            to="/favourites"
           />
         </section>
 
@@ -110,7 +111,7 @@ function DashboardCard({ icon, title, description, to }) {
   );
 
   return (
-    to ? <Link to={to} className={className}>{content}</Link> : <div className={className}>{content}</div>
+    to ? <Link to={to} aria-label={title} className={className}>{content}</Link> : <div className={className}>{content}</div>
   );
 }
 

@@ -33,7 +33,7 @@ function PlayerDetails() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      <AppHeader showPlayers />
+      <AppHeader showPlayers showMatches showFavourites />
       <main className="mx-auto max-w-3xl px-6 py-10">
         <Link to="/players" className="text-sm font-semibold text-amber-700 hover:underline">← All players</Link>
         {error && <p role="alert" className="mt-5 rounded-lg bg-red-50 p-4 text-red-700">{error}</p>}

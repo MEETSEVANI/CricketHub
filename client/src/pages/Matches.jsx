@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AppHeader from '../components/AppHeader';
-import { apiRequest } from '../services/apiClient';
+import { apiRequest, sendJson } from '../services/apiClient';
 
 function Matches() {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState('');
   const [matches, setMatches] = useState([]);
+  const [favouriteIds, setFavouriteIds] = useState(new Set());
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -15,10 +16,14 @@ function Matches() {
     const params = new URLSearchParams();
     if (query) params.set('q', query);
     if (filter) params.set('status', filter);
-    apiRequest(`/matches?${params}`)
-      .then((matchData) => {
+    Promise.allSettled([apiRequest(`/matches?${params}`), apiRequest('/favourites')])
+      .then(([matchResult, favouriteResult]) => {
         if (!active) return;
-        setMatches(matchData.matches);
+        if (matchResult.status === 'rejected') throw matchResult.reason;
+        setMatches(matchResult.value.matches);
+        if (favouriteResult.status === 'fulfilled') {
+          setFavouriteIds(new Set(favouriteResult.value.favourites.filter((item) => item.type === 'match').map((item) => item.match_id)));
+        }
         setError('');
       })
       .catch((requestError) => { if (active) setError(requestError.message); })
@@ -26,9 +31,22 @@ function Matches() {
     return () => { active = false; };
   }, [query, filter]);
 
+  async function toggleFavourite(matchId) {
+    try {
+      if (favouriteIds.has(matchId)) {
+        await apiRequest(`/favourites/match/${matchId}`, { method: 'DELETE' });
+        setFavouriteIds((current) => new Set([...current].filter((id) => id !== matchId)));
+      } else {
+        await apiRequest('/favourites', sendJson('POST', { type: 'match', id: matchId }));
+        setFavouriteIds((current) => new Set([...current, matchId]));
+      }
+      setError('');
+    } catch (requestError) { setError(requestError.message); }
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      <AppHeader showPlayers showMatches />
+      <AppHeader showPlayers showMatches showFavourites />
       <main className="mx-auto max-w-7xl px-6 py-10 lg:px-10">
         <p className="text-sm font-extrabold tracking-[0.18em] text-amber-600">MATCH CENTRE</p>
         <h1 className="mt-2 text-4xl font-black tracking-tight">Cricket matches</h1>
@@ -42,7 +60,7 @@ function Matches() {
         {loading ? <p className="mt-8 text-slate-500">Loading matches…</p> : (
           <section className="mt-8 grid gap-4 lg:grid-cols-2">
             {matches.map((match) => (
-              <article key={match.id} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <article key={match.id} className="flex items-start justify-between gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-xs font-extrabold uppercase tracking-wider text-amber-700">{match.status}</p>
@@ -51,6 +69,7 @@ function Matches() {
                     <p className="mt-2 text-sm text-slate-500">{new Date(match.match_datetime).toLocaleString()} · {match.venue}</p>
                     {match.status === 'Completed' && <p className="mt-3 font-semibold text-emerald-700">{match.result}</p>}
                   </div>
+                  <button aria-label={`${favouriteIds.has(match.id) ? 'Remove' : 'Add'} ${match.match_name} ${favouriteIds.has(match.id) ? 'from' : 'to'} favourites`} onClick={() => toggleFavourite(match.id)} className="shrink-0 rounded-lg px-3 py-2 text-xl text-amber-600 hover:bg-amber-50">{favouriteIds.has(match.id) ? '★' : '☆'}</button>
                 </div>
               </article>
             ))}
