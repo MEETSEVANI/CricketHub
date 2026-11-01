@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Players from './pages/Players';
 import PlayerDetails from './pages/PlayerDetails';
 import Matches from './pages/Matches';
+import MatchDetails from './pages/MatchDetails';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -187,6 +188,7 @@ function App() {
           <Route path="/players" element={<ProtectedRoute><Players /></ProtectedRoute>} />
           <Route path="/players/:id" element={<ProtectedRoute><PlayerDetails /></ProtectedRoute>} />
           <Route path="/matches" element={<ProtectedRoute><Matches /></ProtectedRoute>} />
+          <Route path="/matches/:id" element={<ProtectedRoute><MatchDetails /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
