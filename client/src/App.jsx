@@ -11,6 +11,7 @@ import MatchDetails from './pages/MatchDetails';
 import Favourites from './pages/Favourites';
 import AdminPlayers from './pages/AdminPlayers';
 import AdminMatches from './pages/AdminMatches';
+import AdminMatchData from './pages/AdminMatchData';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -195,6 +196,7 @@ function App() {
           <Route path="/favourites" element={<ProtectedRoute><Favourites /></ProtectedRoute>} />
           <Route path="/admin/players" element={<AdminRoute><AdminPlayers /></AdminRoute>} />
           <Route path="/admin/matches" element={<AdminRoute><AdminMatches /></AdminRoute>} />
+          <Route path="/admin/matches/:id/data" element={<AdminRoute><AdminMatchData /></AdminRoute>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

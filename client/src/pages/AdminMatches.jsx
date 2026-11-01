@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import AppHeader from '../components/AppHeader';
 import { apiRequest, sendJson } from '../services/apiClient';
 
@@ -138,6 +139,7 @@ function AdminMatches() {
                     {match.result && <p className="text-sm text-emerald-700">{match.result}</p>}
                   </div>
                   <div className="flex gap-2">
+                    <Link to={`/admin/matches/${match.id}/data`} className="rounded-lg border border-amber-200 px-3 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-50">Manage match data</Link>
                     <button onClick={() => beginEdit(match)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold hover:bg-slate-50">Edit</button>
                     <button onClick={() => handleDelete(match)} className="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 hover:bg-red-50">Delete</button>
                   </div>

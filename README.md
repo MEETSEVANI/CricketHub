@@ -1,6 +1,6 @@
 # CricketHub
 
-CricketHub is a web application for browsing manually maintained cricket player and match records. Registered users can search records, view details, and save favourites. Administrators can manage player records. Match administration, team lineup editing, and performance entry are the next planned feature slice.
+CricketHub is a web application for browsing manually maintained cricket player and match records. Registered users can search records, view details, and save favourites. Administrators can manage player and match records, team lineups, match results, and player performances.
 
 ## Technology
 
@@ -61,7 +61,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Before running the browser tests, start PostgreSQL and initialize the schema and demo data with `npm run db:setup` from `server/`. Playwright starts the API and frontend, but it does not start PostgreSQL or initialize the database. The suite covers registration, login, player and match browsing, favourites, access control, and administrator player create, edit, and delete. It creates temporary accounts and records, then removes them. Reports are written to `client/playwright-report` and `client/test-results`.
+Before running the browser tests, start PostgreSQL and initialize the schema and demo data with `npm run db:setup` from `server/`. Playwright starts the API and frontend, but it does not start PostgreSQL or initialize the database. The suite covers registration, login, player and match browsing, favourites, access control, and administrator create, edit, and delete workflows for players and matches, including lineup and performance entry. It creates temporary accounts and records, then removes them. Reports are written to `client/playwright-report` and `client/test-results`.
 
 ## Deployment configuration
 
@@ -74,6 +74,7 @@ The frontend can call a separately hosted API by setting `VITE_API_URL` to the A
 - Authenticated match search, upcoming/completed filters, and match details
 - Per-user player and match favourites
 - Administrator player create, edit, and delete
+- Administrator match create, edit, and delete, including team lineups, results, runs, and wickets
 - Relational data integrity for matches, lineups, performances, and favourites
 
 Live match updates, third-party cricket data integrations, automated data collection, commentary, and fall-of-wickets breakdowns are outside the first release.

@@ -119,12 +119,60 @@ describe('Cricket data API', () => {
     expect(created.statusCode).toBe(201);
     const matchId = created.body.match.id;
 
+    const notCompleted = await request(app)
+      .put(`/api/matches/${matchId}/performances`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ performances: [] });
+    expect(notCompleted.statusCode).toBe(409);
+
     const updated = await request(app)
       .put(`/api/matches/${matchId}`)
       .set('Authorization', `Bearer ${adminToken}`)
       .send({ ...payload, status: 'Completed', result: 'Northern Comets won by 12 runs.' });
     expect(updated.statusCode).toBe(200);
     expect(updated.body.match).toMatchObject({ status: 'Completed', result: 'Northern Comets won by 12 runs.' });
+
+    const players = await pool.query('SELECT id FROM players ORDER BY id LIMIT 2');
+    const teamAPlayer = players.rows[0].id;
+    const teamBPlayer = players.rows[1].id;
+    const deniedLineups = await request(app)
+      .put(`/api/matches/${matchId}/lineups`)
+      .set('Authorization', `Bearer ${registeredToken}`)
+      .send({ team_a_player_ids: [teamAPlayer], team_b_player_ids: [teamBPlayer] });
+    expect(deniedLineups.statusCode).toBe(403);
+
+    const duplicateLineup = await request(app)
+      .put(`/api/matches/${matchId}/lineups`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ team_a_player_ids: [teamAPlayer, teamAPlayer], team_b_player_ids: [teamBPlayer] });
+    expect(duplicateLineup.statusCode).toBe(400);
+
+    const lineups = await request(app)
+      .put(`/api/matches/${matchId}/lineups`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ team_a_player_ids: [teamAPlayer], team_b_player_ids: [teamBPlayer] });
+    expect(lineups.statusCode).toBe(200);
+    expect(lineups.body.lineups).toHaveLength(2);
+
+    const invalidPerformance = await request(app)
+      .put(`/api/matches/${matchId}/performances`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ performances: [{ player_id: 999999, runs: 12, wickets: 1 }] });
+    expect(invalidPerformance.statusCode).toBe(400);
+
+    const performance = await request(app)
+      .put(`/api/matches/${matchId}/performances`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ performances: [{ player_id: teamAPlayer, runs: 84, wickets: 2 }] });
+    expect(performance.statusCode).toBe(200);
+    expect(performance.body.performances).toMatchObject([{ player_id: teamAPlayer, runs: 84, wickets: 2 }]);
+
+    const detail = await request(app)
+      .get(`/api/matches/${matchId}`)
+      .set('Authorization', `Bearer ${registeredToken}`);
+    expect(detail.statusCode).toBe(200);
+    expect(detail.body.lineups).toHaveLength(2);
+    expect(detail.body.performances).toMatchObject([{ player_id: teamAPlayer, runs: 84, wickets: 2 }]);
 
     const deleted = await request(app)
       .delete(`/api/matches/${matchId}`)

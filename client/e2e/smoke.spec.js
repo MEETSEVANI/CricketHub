@@ -148,8 +148,30 @@ test('administrator can create, complete, and delete match records', async ({ pa
   await expect(page.getByRole('status')).toContainText('Match updated.');
   await expect(matchRow).toContainText('Northern Comets won by 12 runs.');
 
+  const matchId = Number((await matchRow.getAttribute('data-testid')).replace('match-row-', ''));
+  await matchRow.getByRole('link', { name: 'Manage match data' }).click();
+  await expect(page.getByRole('heading', { name: 'Match lineups and performances' })).toBeVisible();
+  await page.getByRole('checkbox', { name: 'Add Aarav Mehta to Northern Comets lineup' }).check();
+  await page.getByRole('checkbox', { name: 'Add Zoya Khan to Lakeshore Falcons lineup' }).check();
+  await page.getByRole('button', { name: 'Save lineups' }).click();
+  await expect(page.getByRole('status')).toContainText('Lineups saved.');
+
+  await page.getByLabel('Aarav Mehta runs').fill('74');
+  await page.getByLabel('Aarav Mehta wickets').fill('1');
+  await page.getByLabel('Zoya Khan runs').fill('28');
+  await page.getByLabel('Zoya Khan wickets').fill('3');
+  await page.getByRole('button', { name: 'Save performances' }).click();
+  await expect(page.getByRole('status')).toContainText('Player performances saved.');
+
+  await page.goto(`/matches/${matchId}`);
+  await expect(page.getByRole('heading', { name: testMatchName })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Aarav Mehta' })).toBeVisible();
+  await expect(page.getByText('74 runs · 1 wickets')).toBeVisible();
+
+  await page.goto('/admin/matches');
+  const updatedMatchRow = page.locator('[data-testid^="match-row-"]').filter({ hasText: testMatchName });
   page.once('dialog', (dialog) => dialog.accept());
-  await matchRow.getByRole('button', { name: 'Delete' }).click();
-  await expect(matchRow).toHaveCount(0);
+  await updatedMatchRow.getByRole('button', { name: 'Delete' }).click();
+  await expect(updatedMatchRow).toHaveCount(0);
   await expect(page.getByRole('status')).toContainText('Match deleted.');
 });
