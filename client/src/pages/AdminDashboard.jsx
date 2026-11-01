@@ -39,6 +39,8 @@ function AdminDashboard() {
           <AdminCard
             title="Manage Players"
             description="Create, update, view, and remove player records."
+            to="/admin/players"
+            available
           />
 
           <AdminCard
@@ -51,16 +53,14 @@ function AdminDashboard() {
   );
 }
 
-function AdminCard({ title, description }) {
+function AdminCard({ title, description, to, available = false }) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-7 shadow-sm">
       <h2 className="text-xl font-bold">{title}</h2>
 
       <p className="mt-2 leading-7 text-slate-500">{description}</p>
 
-      <span className="mt-5 inline-block rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-500">
-        Coming soon
-      </span>
+      {available ? <Link to={to} className="mt-5 inline-block rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Open player management</Link> : <span className="mt-5 inline-block rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-500">Planned next</span>}
     </div>
   );
 }
