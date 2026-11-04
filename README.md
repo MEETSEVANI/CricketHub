@@ -67,6 +67,14 @@ Before running the browser tests, start PostgreSQL and initialize the schema and
 
 `render.yaml` defines separate Render services for the Express API and React frontend. It applies the repeatable schema and demo seed before starting the API, checks the PostgreSQL health route, and rewrites frontend routes to React Router. Create a Supabase project and set `DATABASE_URL` in Render to its Session Pooler connection string with `sslmode=require`; Render generates `JWT_SECRET`. The blueprint uses the expected Render service URLs for `CLIENT_URL` and `VITE_API_URL`; update them if Render assigns different URLs. Keep database credentials in the provider dashboard, never in this repository. The blueprint uses Render's free web-service plan, which sleeps after 15 minutes without traffic; Supabase Free may pause a project after a week of low database activity.
 
+The API and static site set security response headers. Run the passive OWASP ZAP baseline scan against a running local or deployed URL with Docker:
+
+```sh
+bash scripts/zap-baseline.sh http://localhost:3000/ api-local
+```
+
+The script saves HTML and JSON reports under `security/reports/`. The baseline scan spiders the target and runs passive checks; it does not perform active attacks. Review the report before release and run it again against the deployed site URL.
+
 ## Current feature scope
 
 - Accounts, login, logout, and role-protected routes
