@@ -48,7 +48,7 @@ test('registered user can open a completed match and review its lineups and scor
   await page.getByRole('button', { name: 'Sign In' }).click();
   await expect(page.getByRole('heading', { name: 'Welcome to CricketHub' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Matches', exact: true }).click();
+  await page.getByRole('navigation').getByRole('link', { name: 'Matches', exact: true }).click();
   await page.getByRole('link', { name: match.match_name }).click();
   await expect(page.getByRole('heading', { name: match.match_name })).toBeVisible();
   await expect(page.getByText(match.result)).toBeVisible();

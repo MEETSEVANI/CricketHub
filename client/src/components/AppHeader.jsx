@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 function AppHeader({ admin = false, showPlayers = false, showMatches = false, showFavourites = false }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const showAdmin = admin || user?.role === 'Administrator';
 
   function handleLogout() {
     logout();
@@ -21,7 +22,7 @@ function AppHeader({ admin = false, showPlayers = false, showMatches = false, sh
           {showPlayers && <Link className="rounded-lg px-3 py-2 hover:bg-slate-100" to="/players">Players</Link>}
           {showMatches && <Link className="rounded-lg px-3 py-2 hover:bg-slate-100" to="/matches">Matches</Link>}
           {showFavourites && <Link className="rounded-lg px-3 py-2 hover:bg-slate-100" to="/favourites">Favourites</Link>}
-          {admin && <Link className="rounded-lg px-3 py-2 text-amber-700 hover:bg-amber-50" to="/admin">Admin</Link>}
+          {showAdmin && <Link className="rounded-lg px-3 py-2 text-amber-700 hover:bg-amber-50" to="/admin">Admin</Link>}
           <span className="hidden px-2 text-slate-500 lg:inline">{user?.email}</span>
           <button onClick={handleLogout} className="rounded-lg border border-slate-300 px-3 py-2 hover:bg-slate-100">Log out</button>
         </div>

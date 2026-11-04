@@ -39,7 +39,7 @@ test('visitor can register, sign in, and sign out; private routes redirect after
 
   await page.goto('/admin');
   await expect(page).toHaveURL(/\/dashboard$/);
-  await page.getByRole('button', { name: 'Logout' }).click();
+  await page.getByRole('button', { name: /log out/i }).click();
   await expect(page).toHaveURL(/\/login$/);
   await page.goto('/dashboard');
   await expect(page).toHaveURL(/\/login$/);

@@ -19,9 +19,36 @@ async function signIn(page, role, email) {
 
 test('registered users cannot open administrator player management', async ({ page }) => {
   await signIn(page, 'Registered User', 'member-smoke@example.test');
+  await expect(page.getByRole('link', { name: 'Admin', exact: true })).toHaveCount(0);
   await page.goto('/admin/players');
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole('heading', { name: 'Welcome to CricketHub' })).toBeVisible();
+});
+
+test('administrator navigation stays available across dashboard and cricket pages', async ({ page }) => {
+  await signIn(page, 'Administrator', 'admin-navigation@example.test');
+  await page.route('**/api/**', (route) => {
+    const pathname = new URL(route.request().url()).pathname;
+    const body = pathname.includes('/players')
+      ? { status: 'success', players: [] }
+      : pathname.includes('/matches')
+        ? { status: 'success', matches: [] }
+        : { status: 'success', favourites: [] };
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
+  });
+  const adminLink = page.getByRole('link', { name: 'Admin', exact: true });
+  await expect(adminLink).toBeVisible();
+  await adminLink.click();
+  await expect(page).toHaveURL(/\/admin$/);
+  await expect(page.getByRole('heading', { name: 'Administrator Dashboard' })).toBeVisible();
+
+  for (const [label, route] of [['Players', '/players'], ['Matches', '/matches'], ['Favourites', '/favourites']]) {
+    await page.getByRole('link', { name: label, exact: true }).click();
+    await expect(page).toHaveURL(new RegExp(`${route}$`));
+    await expect(page.getByRole('link', { name: 'Admin', exact: true })).toBeVisible();
+    await page.getByRole('link', { name: 'Admin', exact: true }).click();
+    await expect(page).toHaveURL(/\/admin$/);
+  }
 });
 
 test('administrator can create, update, and delete a player', async ({ page }) => {

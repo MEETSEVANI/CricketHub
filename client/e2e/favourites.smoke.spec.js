@@ -58,11 +58,11 @@ test('registered user can save players and matches, then remove them from favour
   await page.getByRole('button', { name: 'Sign In' }).click();
   await expect(page.getByRole('heading', { name: 'Welcome to CricketHub' })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Players', exact: true }).click();
+  await page.getByRole('navigation').getByRole('link', { name: 'Players', exact: true }).click();
   await page.getByRole('button', { name: 'Add Aarav Mehta to favourites' }).click();
-  await page.getByRole('link', { name: 'Matches', exact: true }).click();
+  await page.getByRole('navigation').getByRole('link', { name: 'Matches', exact: true }).click();
   await page.getByRole('button', { name: 'Add Autumn Shield: Stars vs Mariners to favourites' }).click();
-  await page.getByRole('link', { name: 'Favourites' }).click();
+  await page.getByRole('navigation').getByRole('link', { name: 'Favourites' }).click();
   await expect(page.getByRole('link', { name: 'Aarav Mehta' })).toBeVisible();
   await expect(page.getByRole('link', { name: match.match_name })).toBeVisible();
 

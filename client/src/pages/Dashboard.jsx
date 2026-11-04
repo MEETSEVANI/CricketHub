@@ -1,44 +1,13 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AppHeader from '../components/AppHeader';
 
 function Dashboard() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
-  function handleLogout() {
-    logout();
-    navigate('/login');
-  }
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b border-slate-200 bg-white">
-        <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
-          <Link
-            to="/dashboard"
-            className="flex items-center gap-2 text-2xl font-extrabold tracking-tight"
-          >
-            <span className="text-3xl">🏏</span>
-            <span>CricketHub</span>
-          </Link>
-
-          <div className="flex items-center gap-4">
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-semibold text-slate-900">
-                {user?.email}
-              </p>
-              <p className="text-xs text-slate-500">{user?.role}</p>
-            </div>
-
-            <button
-              onClick={handleLogout}
-              className="rounded-lg border border-slate-300 px-4 py-2.5 font-semibold text-slate-700 transition hover:bg-slate-100"
-            >
-              Logout
-            </button>
-          </div>
-        </nav>
-      </header>
+      <AppHeader showPlayers showMatches showFavourites />
 
       <main className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
         <div className="mb-10">
@@ -90,9 +59,11 @@ function Dashboard() {
             </h2>
 
             <p className="mt-2 text-slate-600">
-              Administrator features for managing players, matches, lineups,
-              and results will appear here as the project develops.
+              Manage player records, matches, lineups, and results from the administrator dashboard.
             </p>
+            <Link to="/admin" className="mt-4 inline-block rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">
+              Open administration
+            </Link>
           </section>
         )}
       </main>

@@ -60,26 +60,26 @@ test('a new visitor can register, sign in, and sign out', async ({ page }) => {
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Sign In' }).click();
   await expect(page.getByRole('heading', { name: 'Welcome to CricketHub' })).toBeVisible();
-  await page.getByRole('button', { name: 'Logout' }).click();
+  await page.getByRole('button', { name: /log out/i }).click();
   await expect(page).toHaveURL(/\/login$/);
 });
 
 test('registered user can search, view details, save favourites, and browse matches', async ({ page }) => {
   await signIn(page, registeredEmail);
 
-  await page.getByRole('link', { name: 'Players', exact: true }).click();
+  await page.getByRole('navigation').getByRole('link', { name: 'Players', exact: true }).click();
   await page.getByLabel('Search players by name').fill('aArAv');
   await expect(page.getByRole('link', { name: /Aarav Mehta/ })).toBeVisible();
   await page.getByRole('link', { name: /Aarav Mehta/ }).click();
   await expect(page.getByRole('heading', { name: 'Aarav Mehta' })).toBeVisible();
   await page.getByRole('button', { name: 'Add to favourites' }).click();
 
-  await page.getByRole('link', { name: 'Favourites' }).click();
+  await page.getByRole('navigation').getByRole('link', { name: 'Favourites' }).click();
   await expect(page.getByRole('link', { name: 'Aarav Mehta' })).toBeVisible();
   await page.getByRole('button', { name: 'Remove' }).click();
   await expect(page.getByText('You haven’t saved anything yet.')).toBeVisible();
 
-  await page.getByRole('link', { name: 'Matches', exact: true }).click();
+  await page.getByRole('navigation').getByRole('link', { name: 'Matches', exact: true }).click();
   await page.getByLabel('Filter matches by status').selectOption('Scheduled');
   await expect(page.getByText('Autumn Shield: Stars vs Mariners')).toBeVisible();
   await page.getByRole('link', { name: 'Autumn Shield: Stars vs Mariners' }).click();
