@@ -57,6 +57,10 @@ app.get('/api/health/database', async (req, res) => {
   }
 });
 
+app.use('/api', (req, res) => {
+  res.status(404).json({ status: 'error', message: 'API endpoint not found.' });
+});
+
 // Export the app for automated testing
 module.exports = app;
 

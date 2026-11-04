@@ -65,7 +65,7 @@ Before running the browser tests, start PostgreSQL and initialize the schema and
 
 ## Deployment configuration
 
-The frontend can call a separately hosted API by setting `VITE_API_URL` to the API origin at build time. `client/.env.example` documents this setting. The API needs `DATABASE_URL`, `JWT_SECRET`, and `CLIENT_URL` configured in its hosting environment. No cloud deployment has been created for this repository yet.
+`render.yaml` defines separate Render services for the Express API and React frontend. It applies the repeatable schema and demo seed before starting the API, checks the PostgreSQL health route, and rewrites frontend routes to React Router. Create a Supabase project and set `DATABASE_URL` in Render to its Session Pooler connection string with `sslmode=require`; Render generates `JWT_SECRET`. The blueprint uses the expected Render service URLs for `CLIENT_URL` and `VITE_API_URL`; update them if Render assigns different URLs. Keep database credentials in the provider dashboard, never in this repository. The blueprint uses Render's free web-service plan, which sleeps after 15 minutes without traffic; Supabase Free may pause a project after a week of low database activity.
 
 ## Current feature scope
 
