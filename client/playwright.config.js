@@ -3,7 +3,7 @@ import { env } from 'node:process';
 
 export default defineConfig({
   testDir: './e2e',
-  testMatch: ['**/auth.smoke.spec.js', '**/player.smoke.spec.js', '**/matches.smoke.spec.js', '**/match-details.smoke.spec.js', '**/favourites.smoke.spec.js', '**/admin-players.smoke.spec.js', '**/smoke.spec.js'],
+  testMatch: ['**/auth.smoke.spec.js', '**/player.smoke.spec.js', '**/matches.smoke.spec.js', '**/match-details.smoke.spec.js', '**/favourites.smoke.spec.js', '**/admin-players.smoke.spec.js', '**/accessibility.spec.js', '**/smoke.spec.js'],
   fullyParallel: false,
   workers: 1,
   reporter: [['list'], ['html', { open: 'never' }]],

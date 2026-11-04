@@ -38,7 +38,7 @@ function PlayerDetails() {
         <Link to="/players" className="text-sm font-semibold text-amber-700 hover:underline">← All players</Link>
         {error && <p role="alert" className="mt-5 rounded-lg bg-red-50 p-4 text-red-700">{error}</p>}
         {player && <article className="mt-6 rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
-          <p className="text-sm font-bold uppercase tracking-widest text-amber-600">{player.country} · {player.role}</p>
+          <p className="text-sm font-bold uppercase tracking-widest text-amber-700">{player.country} · {player.role}</p>
           <h1 className="mt-2 text-4xl font-black">{player.name}</h1>
           <button onClick={toggleFavourite} className="mt-5 rounded-lg bg-amber-500 px-4 py-2 font-bold text-slate-950 hover:bg-amber-400">{favourite ? 'Remove from favourites' : 'Add to favourites'}</button>
           <dl className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">

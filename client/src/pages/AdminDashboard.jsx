@@ -7,7 +7,7 @@ function AdminDashboard() {
       <AppHeader admin showPlayers showMatches showFavourites />
 
       <main className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
-        <p className="text-sm font-extrabold tracking-[0.18em] text-amber-600">
+        <p className="text-sm font-extrabold tracking-[0.18em] text-amber-700">
           ADMINISTRATION
         </p>
 

@@ -49,13 +49,13 @@ function Home() {
       <main>
         <section className="mx-auto grid max-w-7xl items-center gap-12 px-6 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-24">
           <div>
-            <p className="mb-5 text-sm font-extrabold tracking-[0.18em] text-amber-600">
+            <p className="mb-5 text-sm font-extrabold tracking-[0.18em] text-amber-700">
               YOUR CRICKET INFORMATION HUB
             </p>
 
             <h1 className="text-6xl font-black leading-[0.98] tracking-[-0.05em] text-slate-900 sm:text-7xl">
               Everything cricket,
-              <span className="block text-amber-600">in one place.</span>
+              <span className="block text-amber-700">in one place.</span>
             </h1>
 
             <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-500">
@@ -86,7 +86,7 @@ function Home() {
                 FEATURED MATCH
               </span>
 
-              <span className="rounded-full bg-emerald-600 px-3 py-2 text-xs font-bold tracking-wider">
+              <span className="rounded-full bg-emerald-700 px-3 py-2 text-xs font-bold tracking-wider">
                 COMPLETED
               </span>
             </div>

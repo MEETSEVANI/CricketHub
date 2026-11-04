@@ -120,7 +120,7 @@ function AdminMatchData() {
       <AppHeader admin showPlayers showMatches showFavourites />
       <main className="mx-auto max-w-5xl px-6 py-10 lg:px-10">
         <Link to="/admin/matches" className="text-sm font-semibold text-amber-700 hover:underline">← Manage matches</Link>
-        <p className="mt-6 text-sm font-extrabold tracking-[0.18em] text-amber-600">ADMINISTRATION</p>
+        <p className="mt-6 text-sm font-extrabold tracking-[0.18em] text-amber-700">ADMINISTRATION</p>
         <h1 className="mt-2 text-4xl font-black">Match lineups and performances</h1>
         {loading && <p role="status" className="mt-5 text-slate-500">Loading match data…</p>}
         {error && <p role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">{error}</p>}

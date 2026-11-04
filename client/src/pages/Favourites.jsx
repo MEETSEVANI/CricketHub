@@ -30,7 +30,7 @@ function Favourites() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <AppHeader showPlayers showMatches showFavourites />
       <main className="mx-auto max-w-5xl px-6 py-10">
-        <p className="text-sm font-extrabold tracking-[0.18em] text-amber-600">YOUR SAVED CRICKET</p>
+        <p className="text-sm font-extrabold tracking-[0.18em] text-amber-700">YOUR SAVED CRICKET</p>
         <h1 className="mt-2 text-4xl font-black">Favourites</h1>
         {error && <p role="alert" className="mt-5 rounded-lg bg-red-50 p-4 text-red-700">{error}</p>}
         {loading && <p role="status" className="mt-7 text-slate-500">Loading favourites…</p>}

@@ -63,7 +63,7 @@ function Login() {
       <main className="flex min-h-[calc(100vh-5rem)] items-center justify-center px-6 py-12">
         <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <div className="mb-8">
-            <p className="text-sm font-extrabold tracking-[0.18em] text-amber-600">
+            <p className="text-sm font-extrabold tracking-[0.18em] text-amber-700">
               WELCOME BACK
             </p>
 
@@ -141,7 +141,7 @@ function Login() {
             Don't have an account?{' '}
             <Link
               to="/register"
-              className="font-semibold text-amber-600 hover:text-amber-700"
+              className="font-semibold text-amber-700"
             >
               Create one
             </Link>

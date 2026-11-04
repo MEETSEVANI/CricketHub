@@ -11,7 +11,7 @@ function Dashboard() {
 
       <main className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
         <div className="mb-10">
-          <p className="text-sm font-extrabold tracking-[0.18em] text-amber-600">
+          <p className="text-sm font-extrabold tracking-[0.18em] text-amber-700">
             DASHBOARD
           </p>
 
@@ -82,7 +82,7 @@ function DashboardCard({ icon, title, description, to }) {
   );
 
   return (
-    to ? <Link to={to} aria-label={title} className={className}>{content}</Link> : <div className={className}>{content}</div>
+    to ? <Link to={to} className={className}>{content}</Link> : <div className={className}>{content}</div>
   );
 }
 
