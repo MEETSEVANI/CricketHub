@@ -49,7 +49,7 @@ function MatchDetails() {
           <article className="mt-6 rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
             <p className="text-sm font-bold uppercase tracking-widest text-amber-700">{match.status}</p>
             <h1 className="mt-2 text-3xl font-black">{match.match_name}</h1>
-            <p className="mt-3 text-lg text-slate-700">{match.team_a} <span className="px-2 text-slate-400">vs</span> {match.team_b}</p>
+            <p className="mt-3 text-lg text-slate-700">{match.team_a} <span className="px-2 text-slate-600">vs</span> {match.team_b}</p>
             <p className="mt-2 text-slate-500">{new Date(match.match_datetime).toLocaleString()} · {match.venue}</p>
             {match.status === 'Completed' && <p className="mt-5 rounded-lg bg-emerald-50 p-4 font-bold text-emerald-800">{match.result}</p>}
             <button onClick={toggleFavourite} className="mt-5 rounded-lg bg-amber-500 px-4 py-2 font-bold text-slate-950 hover:bg-amber-400">{favourite ? 'Remove from favourites' : 'Save to favourites'}</button>

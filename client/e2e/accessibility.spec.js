@@ -22,6 +22,11 @@ const match = {
   status: 'Scheduled',
   result: null,
 };
+const completedMatch = {
+  ...match,
+  status: 'Completed',
+  result: 'North Stars won by 18 runs.',
+};
 const favourites = [
   { id: 1, type: 'player', player_id: player.id, player_name: player.name, country: player.country, role: player.role },
   { id: 2, type: 'match', match_id: match.id, match_name: match.match_name, team_a: match.team_a, team_b: match.team_b, match_status: match.status },
@@ -32,10 +37,19 @@ async function prepareApi(page) {
     const pathname = new URL(route.request().url()).pathname;
     const body = pathname === '/api/favourites'
       ? { status: 'success', favourites }
+      : pathname === `/api/players/${player.id}`
+        ? { status: 'success', player }
+        : pathname === `/api/matches/${match.id}`
+          ? {
+            status: 'success',
+            match: completedMatch,
+            lineups: [{ player_id: player.id, name: player.name, role: player.role, team_name: completedMatch.team_a }],
+            performances: [],
+          }
       : pathname.includes('/players')
         ? { status: 'success', players: [player] }
         : pathname.includes('/matches')
-          ? { status: 'success', matches: [match] }
+          ? { status: 'success', matches: [completedMatch] }
           : { status: 'success', favourites };
 
     return route.fulfill({
@@ -53,8 +67,9 @@ async function signInAs(page, account) {
   }, account);
 }
 
-async function expectAccessible(page, route) {
+async function expectAccessible(page, route, readyText) {
   await page.goto(route);
+  if (readyText) await expect(page.getByText(readyText, { exact: true })).toBeVisible();
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze();
@@ -67,22 +82,32 @@ async function expectAccessible(page, route) {
   ).toEqual([]);
 }
 
-test('public home and authentication pages have no WCAG 2.1 A/AA violations', async ({ page }) => {
+test('A11Y-01 public home and authentication pages have no WCAG 2.1 A/AA violations', async ({ page }) => {
   for (const route of ['/', '/login', '/register']) {
     await expectAccessible(page, route);
   }
 });
 
-test('registered user pages have no WCAG 2.1 A/AA violations', async ({ page }) => {
+test('A11Y-01 registered pages have no WCAG 2.1 A/AA violations and status text does not rely on color alone', async ({ page }) => {
   await prepareApi(page);
   await signInAs(page, user);
 
-  for (const route of ['/dashboard', '/players', '/matches', '/favourites']) {
+  for (const route of ['/dashboard', '/players', '/favourites']) {
     await expectAccessible(page, route);
   }
+  await expectAccessible(page, '/matches');
+  const matchCard = page.locator('article').filter({ hasText: completedMatch.match_name });
+  await expect(matchCard.getByText('Completed', { exact: true })).toBeVisible();
+  await expect(matchCard.getByText(completedMatch.result, { exact: true })).toBeVisible();
+
+  await expectAccessible(page, `/players/${player.id}`, player.name);
+  await expectAccessible(page, `/matches/${match.id}`, completedMatch.match_name);
+
+  await expect(page.getByText('Completed', { exact: true })).toBeVisible();
+  await expect(page.getByText(completedMatch.result, { exact: true })).toBeVisible();
 });
 
-test('administrator pages have no WCAG 2.1 A/AA violations', async ({ page }) => {
+test('A11Y-01 administrator pages have no WCAG 2.1 A/AA violations', async ({ page }) => {
   await prepareApi(page);
   await signInAs(page, admin);
 
