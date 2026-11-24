@@ -17,10 +17,18 @@ afterAll(async () => {
 describe('Authentication API', () => {
   test('GET /api/health returns a successful response', async () => {
     const response = await request(app)
-      .get('/api/health');
+      .get('/api/health')
+      .set('x-forwarded-proto', 'https');
 
     expect(response.statusCode).toBe(200);
     expect(response.body.status).toBe('ok');
+    expect(response.headers).toMatchObject({
+      'x-content-type-options': 'nosniff',
+      'x-frame-options': 'DENY',
+      'strict-transport-security': 'max-age=31536000; includeSubDomains',
+      'cache-control': 'no-store',
+    });
+    expect(response.headers).not.toHaveProperty('x-powered-by');
   });
 
   test('POST /api/auth/register rejects an invalid password', async () => {
