@@ -127,4 +127,16 @@ describe('Authentication API', () => {
     expect(response.statusCode).toBe(401);
     expect(response.body.status).toBe('error');
   });
+
+  test('protected Administrator route rejects a malformed bearer token', async () => {
+    const response = await request(app)
+      .get('/api/protected-test')
+      .set('Authorization', 'Bearer not-a-valid-jwt');
+
+    expect(response.statusCode).toBe(401);
+    expect(response.body).toMatchObject({
+      status: 'error',
+      message: 'Invalid or expired authentication token.',
+    });
+  });
 });

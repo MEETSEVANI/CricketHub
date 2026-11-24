@@ -4,31 +4,39 @@ const app = require('../../src/server');
 const pool = require('../../src/config/database');
 
 let registeredToken;
+let secondUserToken;
 let adminToken;
 let testUserId;
+let secondUserId;
 const testEmail = `cricket-api-${Date.now()}@example.test`;
+const secondTestEmail = `cricket-api-second-${Date.now()}@example.test`;
 const testPlayerName = `API Test Player ${Date.now()}`;
 const testMatchName = `API Test Match ${Date.now()}`;
 
-function tokenFor(role) {
-  return jwt.sign({ userId: testUserId, role }, process.env.JWT_SECRET, { expiresIn: '2h' });
+function tokenFor(role, userId = testUserId) {
+  return jwt.sign({ userId, role }, process.env.JWT_SECRET, { expiresIn: '2h' });
 }
 
 beforeAll(async () => {
   const result = await pool.query(
     `INSERT INTO users (email, password_hash, role)
-     VALUES ($1, 'test-password-hash', 'Registered User') RETURNING id`,
-    [testEmail]
+     VALUES ($1, 'test-password-hash', 'Registered User'),
+            ($2, 'test-password-hash', 'Registered User') RETURNING id, email`,
+    [testEmail, secondTestEmail]
   );
-  testUserId = result.rows[0].id;
+  testUserId = result.rows.find((user) => user.email === testEmail).id;
+  secondUserId = result.rows.find((user) => user.email === secondTestEmail).id;
   registeredToken = tokenFor('Registered User');
+  secondUserToken = tokenFor('Registered User', secondUserId);
   adminToken = tokenFor('Administrator');
 });
 
 afterAll(async () => {
   await pool.query('DELETE FROM players WHERE name=$1', [testPlayerName]);
   await pool.query('DELETE FROM matches WHERE match_name=$1', [testMatchName]);
-  if (testUserId) await pool.query('DELETE FROM users WHERE id=$1', [testUserId]);
+  if (testUserId || secondUserId) {
+    await pool.query('DELETE FROM users WHERE id = ANY($1::int[])', [[testUserId, secondUserId].filter(Boolean)]);
+  }
   await pool.end();
 });
 
@@ -212,9 +220,45 @@ describe('Cricket data API', () => {
     expect(listed.body.favourites).toHaveLength(1);
     expect(listed.body.favourites[0].player_name).toBe('Aarav Mehta');
 
+    const privateList = await request(app)
+      .get('/api/favourites')
+      .set('Authorization', `Bearer ${secondUserToken}`);
+    expect(privateList.statusCode).toBe(200);
+    expect(privateList.body.favourites).toEqual([]);
+
+    const cannotRemoveAnotherUsersFavourite = await request(app)
+      .delete(`/api/favourites/player/${player.rows[0].id}`)
+      .set('Authorization', `Bearer ${secondUserToken}`);
+    expect(cannotRemoveAnotherUsersFavourite.statusCode).toBe(404);
+
     const removed = await request(app)
       .delete(`/api/favourites/player/${player.rows[0].id}`)
       .set('Authorization', `Bearer ${registeredToken}`);
     expect(removed.statusCode).toBe(200);
+  });
+
+  test('favourite endpoints return clear validation and not-found errors', async () => {
+    const invalidType = await request(app)
+      .post('/api/favourites')
+      .set('Authorization', `Bearer ${registeredToken}`)
+      .send({ type: 'team', id: 1 });
+    expect(invalidType.statusCode).toBe(400);
+    expect(invalidType.body.message).toMatch(/valid player or match/i);
+
+    const missingPlayer = await request(app)
+      .post('/api/favourites')
+      .set('Authorization', `Bearer ${registeredToken}`)
+      .send({ type: 'player', id: 2147483647 });
+    expect(missingPlayer.statusCode).toBe(404);
+
+    const invalidRemovalId = await request(app)
+      .delete('/api/favourites/player/not-an-id')
+      .set('Authorization', `Bearer ${registeredToken}`);
+    expect(invalidRemovalId.statusCode).toBe(400);
+
+    const missingFavourite = await request(app)
+      .delete('/api/favourites/match/2147483647')
+      .set('Authorization', `Bearer ${registeredToken}`);
+    expect(missingFavourite.statusCode).toBe(404);
   });
 });
