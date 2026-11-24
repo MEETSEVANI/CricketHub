@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "test": "jest --runInBand",
+    "test:unit": "jest --runInBand tests/unit",
+    "test:api": "jest --runInBand tests/api",
     "dev": "nodemon src/server.js",
     "db:setup": "node scripts/setupDatabase.js",
     "db:promote-admin": "node scripts/promoteAdmin.js"

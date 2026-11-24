@@ -46,7 +46,21 @@ Sign out and sign in again after changing a role so the session token reflects t
 
 ## Testing
 
-Server tests:
+Backend unit tests:
+
+```sh
+cd server
+npm run test:unit
+```
+
+Backend API integration tests (start PostgreSQL and run `npm run db:setup` first):
+
+```sh
+cd server
+npm run test:api
+```
+
+Run both backend suites together:
 
 ```sh
 cd server
