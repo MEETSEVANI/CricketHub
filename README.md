@@ -77,6 +77,8 @@ npm run test:e2e
 
 To run only the database-backed frontend smoke journeys for a concise demo, use `npm run test:smoke` from `client/`. The full `npm run test:e2e` command also runs the feature-specific browser and accessibility suites.
 
+GitHub Actions runs backend unit tests, PostgreSQL-backed API tests, frontend lint/build and smoke tests, and a separate Playwright axe accessibility job on pushes and pull requests. The axe job checks WCAG 2.1 A/AA rules on public, registered-user, detail, and administrator pages, including text contrast and non-color status cues. The Lighthouse accessibility score and HTML/JSON evidence remain available as a separate manual check through `npm run test:a11y:lighthouse`.
+
 Before running browser tests, start PostgreSQL and initialize the schema and demo data with `npm run db:setup` from `server/`. Playwright starts the API and frontend, but it does not start PostgreSQL or initialize the database. The suite covers registration, login, player and match browsing, favourites, access control, and administrator create, edit, and delete workflows for players and matches, including lineup and performance entry. A11Y-01 scans public, registered-user, detail, and administrator pages with axe against WCAG 2.1 A/AA rules, and checks that match outcome information is visible as text rather than conveyed by color alone. E2E tests create temporary accounts and records, then remove them. Reports are written to `client/playwright-report` and `client/test-results`.
 
 For A11Y-02, generate a Lighthouse accessibility score and saved HTML/JSON evidence:
