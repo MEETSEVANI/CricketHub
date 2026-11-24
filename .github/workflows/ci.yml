@@ -1,0 +1,127 @@
+name: CricketHub CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-unit:
+    name: Backend unit tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    env:
+      JWT_SECRET: ci-only-test-secret
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/crickethub
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install backend dependencies
+        run: npm ci
+      - name: Run backend unit tests
+        run: npm run test:unit
+
+  backend-api:
+    name: Backend API integration tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: crickethub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d crickethub"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    defaults:
+      run:
+        working-directory: server
+    env:
+      JWT_SECRET: ci-only-test-secret
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/crickethub
+      NODE_ENV: test
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install backend dependencies
+        run: npm ci
+      - name: Initialize test database and seed demo data
+        run: npm run db:setup
+      - name: Run backend API tests
+        run: npm run test:api
+
+  frontend-smoke:
+    name: Frontend lint, build, and Playwright smoke tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: crickethub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d crickethub"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      JWT_SECRET: ci-only-test-secret
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/crickethub
+      NODE_ENV: test
+      VITE_API_PROXY: http://127.0.0.1:3000
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install backend dependencies
+        working-directory: server
+        run: npm ci
+      - name: Install frontend dependencies
+        working-directory: client
+        run: npm ci
+      - name: Initialize test database and seed demo data
+        working-directory: server
+        run: npm run db:setup
+      - name: Lint frontend
+        working-directory: client
+        run: npm run lint
+      - name: Build frontend
+        working-directory: client
+        run: npm run build
+      - name: Install Playwright Chromium
+        working-directory: client
+        run: npx playwright install --with-deps chromium
+      - name: Run frontend smoke tests
+        working-directory: client
+        run: npm run test:smoke
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-smoke-report
+          path: client/playwright-report/
+          if-no-files-found: ignore
