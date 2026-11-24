@@ -1,0 +1,37 @@
+{
+  "id": "crickethub-katalon-recorder",
+  "version": "2.0",
+  "name": "CricketHub login and player search",
+  "url": "https://crickethub-capstone-web.onrender.com",
+  "tests": [
+    {
+      "id": "login-and-search",
+      "name": "Login and search for seeded player",
+      "commands": [
+        { "id": "open-login", "comment": "Open the live CricketHub login page.", "command": "open", "target": "/login", "value": "" },
+        { "id": "wait-login-email", "comment": "Wait for the login form.", "command": "waitForElementVisible", "target": "id=email", "value": "10000" },
+        { "id": "enter-email", "comment": "Replace this placeholder with a registered demo account email before playback.", "command": "type", "target": "id=email", "value": "REPLACE_WITH_TEST_EMAIL" },
+        { "id": "enter-password", "comment": "Replace this placeholder with that account's password before playback. Do not commit real credentials.", "command": "type", "target": "id=password", "value": "REPLACE_WITH_TEST_PASSWORD" },
+        { "id": "submit-login", "comment": "Sign in.", "command": "click", "target": "css=button[type='submit']", "value": "" },
+        { "id": "wait-dashboard", "comment": "Confirm sign-in reached the dashboard.", "command": "waitForElementVisible", "target": "xpath=//h1[contains(., 'Welcome to CricketHub')]", "value": "10000" },
+        { "id": "assert-dashboard", "comment": "The logged-in dashboard heading is visible.", "command": "assertText", "target": "xpath=//h1", "value": "Welcome to CricketHub" },
+        { "id": "open-players", "comment": "Open the player directory from the main navigation.", "command": "click", "target": "linkText=Players", "value": "" },
+        { "id": "wait-player-search", "comment": "Wait for the accessible player search field.", "command": "waitForElementVisible", "target": "css=input[aria-label='Search players by name']", "value": "10000" },
+        { "id": "search-seeded-player", "comment": "Search for a player inserted by the database seed script.", "command": "type", "target": "css=input[aria-label='Search players by name']", "value": "Aarav Mehta" },
+        { "id": "wait-player-result", "comment": "Wait for the matching player card.", "command": "waitForElementVisible", "target": "xpath=//article//h2[normalize-space()='Aarav Mehta']", "value": "10000" },
+        { "id": "assert-player-result", "comment": "Confirm the expected player appears in search results.", "command": "assertText", "target": "xpath=//article//h2", "value": "Aarav Mehta" }
+      ]
+    }
+  ],
+  "suites": [
+    {
+      "id": "default",
+      "name": "Default Suite",
+      "parallel": false,
+      "timeout": 300,
+      "tests": ["login-and-search"]
+    }
+  ],
+  "urls": ["https://crickethub-capstone-web.onrender.com"],
+  "plugins": []
+}
