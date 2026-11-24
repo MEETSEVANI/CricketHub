@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "test:smoke": "playwright test e2e/smoke.spec.js",
     "test:e2e": "playwright test",
     "test:a11y:lighthouse": "node scripts/run-lighthouse-a11y.mjs"
   },

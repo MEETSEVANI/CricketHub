@@ -75,7 +75,9 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Before running the browser tests, start PostgreSQL and initialize the schema and demo data with `npm run db:setup` from `server/`. Playwright starts the API and frontend, but it does not start PostgreSQL or initialize the database. The suite covers registration, login, player and match browsing, favourites, access control, and administrator create, edit, and delete workflows for players and matches, including lineup and performance entry. A11Y-01 scans public, registered-user, detail, and administrator pages with axe against WCAG 2.1 A/AA rules, and checks that match outcome information is visible as text rather than conveyed by color alone. E2E tests create temporary accounts and records, then remove them. Reports are written to `client/playwright-report` and `client/test-results`.
+To run only the database-backed frontend smoke journeys for a concise demo, use `npm run test:smoke` from `client/`. The full `npm run test:e2e` command also runs the feature-specific browser and accessibility suites.
+
+Before running browser tests, start PostgreSQL and initialize the schema and demo data with `npm run db:setup` from `server/`. Playwright starts the API and frontend, but it does not start PostgreSQL or initialize the database. The suite covers registration, login, player and match browsing, favourites, access control, and administrator create, edit, and delete workflows for players and matches, including lineup and performance entry. A11Y-01 scans public, registered-user, detail, and administrator pages with axe against WCAG 2.1 A/AA rules, and checks that match outcome information is visible as text rather than conveyed by color alone. E2E tests create temporary accounts and records, then remove them. Reports are written to `client/playwright-report` and `client/test-results`.
 
 For A11Y-02, generate a Lighthouse accessibility score and saved HTML/JSON evidence:
 
