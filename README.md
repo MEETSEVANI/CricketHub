@@ -9,6 +9,7 @@ CricketHub is a web application for browsing manually maintained cricket player 
 - PostgreSQL
 - Jest and Supertest for server tests
 - Playwright for browser smoke tests
+- Postman collection and Katalon Recorder `.side` demo artifacts
 
 ## Run locally
 
@@ -89,6 +90,8 @@ npm run test:a11y:lighthouse
 ```
 
 The command scans the live homepage by default and fails if the accessibility score is below 90. Set `LIGHTHOUSE_TARGET_URL` to scan another page and `LIGHTHOUSE_A11Y_TARGET` to change the score threshold. Reports are written to `security/reports/accessibility-lighthouse-live.report.html` and `.json`.
+
+For a professor-facing sequence covering Jest, API integration, Playwright, axe, Lighthouse, Postman, and Katalon Recorder, see [the demo run sheet](testing/PROFESSOR_DEMO.md). The Postman collection is in `testing/postman/`; it contains no account credentials. The Katalon `.side` scenario is in `testing/katalon/` and must be imported and played in the browser extension to verify compatibility on the demo machine.
 
 ## Deployment configuration
 

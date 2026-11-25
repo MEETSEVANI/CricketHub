@@ -1,6 +1,6 @@
 # Katalon Recorder: login and player search
 
-This Selenium IDE `.side` project can be imported into Katalon Recorder. It checks that a registered user can sign in and find the seeded player **Aarav Mehta** in the player directory.
+This Selenium IDE `.side` project is intended for import into Katalon Recorder. It checks that a registered user can sign in and find the seeded player **Aarav Mehta** in the player directory. The file has been syntax-checked as JSON but has not been imported or played in the browser extension here; verify it in the demo browser before presenting a passing result.
 
 ## Run it
 

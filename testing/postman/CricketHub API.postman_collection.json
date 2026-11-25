@@ -1,0 +1,200 @@
+{
+  "info": {
+    "_postman_id": "c7df846d-0da3-4b9d-91e8-c9a0d3d3d0de",
+    "name": "CricketHub API demo",
+    "description": "Read-only API walkthrough: health, authentication, player search/details, scheduled matches, favourites, and role-based access. Set email and password in collection variables before running.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "apiBaseUrl", "value": "https://crickethub-capstone-api.onrender.com", "type": "string" },
+    { "key": "email", "value": "", "type": "string" },
+    { "key": "password", "value": "", "type": "string" },
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "role", "value": "", "type": "string" },
+    { "key": "playerId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "01 - API health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{apiBaseUrl}}/api/health",
+        "description": "Confirm the Express API is responding."
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('API health returns 200 and ok', function () {",
+            "  pm.response.to.have.status(200);",
+            "  pm.expect(pm.response.json().status).to.eql('ok');",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "02 - Player search requires sign-in",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{apiBaseUrl}}/api/players?q=Aarav",
+        "description": "Call a protected endpoint without a token; expect 401."
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Protected player search rejects an anonymous request', function () {",
+            "  pm.response.to.have.status(401);",
+            "  pm.expect(pm.response.json().status).to.eql('error');",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "03 - Sign in",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{apiBaseUrl}}/api/auth/login",
+        "description": "Set collection variables email and password first. Login stores the returned token and role for later requests."
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Login succeeds and returns a token', function () {",
+            "  pm.response.to.have.status(200);",
+            "  const data = pm.response.json();",
+            "  pm.expect(data.status).to.eql('success');",
+            "  pm.expect(data.token).to.be.a('string').and.not.empty;",
+            "  pm.collectionVariables.set('token', data.token);",
+            "  pm.collectionVariables.set('role', data.user.role);",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "04 - Search seeded player",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{apiBaseUrl}}/api/players?q=Aarav",
+        "description": "Search the seeded player dataset and save Aarav Mehta's id."
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Search returns Aarav Mehta', function () {",
+            "  pm.response.to.have.status(200);",
+            "  const data = pm.response.json();",
+            "  const player = data.players.find((item) => item.name === 'Aarav Mehta');",
+            "  pm.expect(player, 'seeded player is present').to.exist;",
+            "  pm.collectionVariables.set('playerId', String(player.id));",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "05 - View player details",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{apiBaseUrl}}/api/players/{{playerId}}",
+        "description": "Fetch the player id saved by the preceding search request."
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Player details include profile and totals', function () {",
+            "  pm.response.to.have.status(200);",
+            "  pm.expect(pm.response.json().player.name).to.eql('Aarav Mehta');",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "06 - List scheduled matches",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{apiBaseUrl}}/api/matches?status=Scheduled",
+        "description": "Verify match filtering returns scheduled matches only."
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Match filter contains only scheduled matches', function () {",
+            "  pm.response.to.have.status(200);",
+            "  const matches = pm.response.json().matches;",
+            "  pm.expect(matches).to.be.an('array').that.is.not.empty;",
+            "  pm.expect(matches.every((match) => match.status === 'Scheduled')).to.eql(true);",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "07 - List my favourites",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{apiBaseUrl}}/api/favourites",
+        "description": "Read the current account's favourites without changing data."
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Favourites belong to the signed-in account response', function () {",
+            "  pm.response.to.have.status(200);",
+            "  pm.expect(pm.response.json().favourites).to.be.an('array');",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "08 - Check administrator role gate",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{apiBaseUrl}}/api/protected-test",
+        "description": "A registered user should receive 403; an Administrator should receive 200."
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Role-protected endpoint matches the account role', function () {",
+            "  const expectedStatus = pm.collectionVariables.get('role') === 'Administrator' ? 200 : 403;",
+            "  pm.response.to.have.status(expectedStatus);",
+            "});"
+          ]
+        }
+      }]
+    }
+  ]
+}
