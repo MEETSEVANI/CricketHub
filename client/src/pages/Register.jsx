@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../services/authService';
+import { useApiReadiness } from '../hooks/useApiReadiness';
 
 function Register() {
   const navigate = useNavigate();
+  const apiReady = useApiReadiness();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -84,6 +86,16 @@ function Register() {
             <p className="mt-2 text-slate-500">
               Create an account to explore cricket information and save your
               favourites.
+            </p>
+
+            <p
+              className={`mt-3 text-sm ${apiReady ? 'text-emerald-800' : 'text-amber-800'}`}
+              role="status"
+              aria-live="polite"
+            >
+              {apiReady
+                ? 'Server ready.'
+                : 'Waking up the server… keep this page open; it will reconnect automatically.'}
             </p>
           </div>
 

@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useApiReadiness } from '../hooks/useApiReadiness';
 
 function Login() {
     const navigate = useNavigate();
     const { login } = useAuth();
+    const apiReady = useApiReadiness();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -73,6 +75,16 @@ function Login() {
 
             <p className="mt-2 text-slate-500">
               Access players, matches, statistics, and your favourites.
+            </p>
+
+            <p
+              className={`mt-3 text-sm ${apiReady ? 'text-emerald-800' : 'text-amber-800'}`}
+              role="status"
+              aria-live="polite"
+            >
+              {apiReady
+                ? 'Server ready.'
+                : 'Waking up the server… keep this page open; it will reconnect automatically.'}
             </p>
           </div>
 
